@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estancias · Casas y departamentos de renta vacacional</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+ <header class="header-villas">
+    <div class="wrap header-villas-inner">
+        <div class="header-marca">
+            <svg class="icono-marca" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 4V2M12 4C8.68629 4 6 6.68629 6 10H18C18 6.68629 15.3137 4 12 4ZM4.92893 4.92893L3.51472 3.51472M19.0711 4.92893L20.4853 3.51472M2 10H4M20 10H22M4 14C4 14 5.5 13 8 13C10.5 13 13.5 15 16 15C18.5 15 20 14 20 14M4 18C4 18 5.5 17 8 17C10.5 17 13.5 19 16 19C18.5 19 20 18 20 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <div class="marca-texto">
+                Villas La Ribera 3<span>.</span>
+            </div>
+        </div>
+
+        <div class="header-tagline">
+            Departamentos de Renta Vacacional
+        </div>
+    </div>
+
+    <div class="header-olas">
+        <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path class="ola-linea" d="M0,20 C320,60 420,-20 740,20 C1060,60 1280,-10 1440,30 L1440,60 L0,60 Z"></path>
+            <path class="ola-relleno" d="M0,40 C280,-10 480,60 840,30 C1160,0 1320,50 1440,20 L1440,60 L0,60 Z"></path>
+        </svg>
+    </div>
+</header>
+
+  <svg class="linea-marea wrap" viewBox="0 0 1160 22" preserveAspectRatio="none" aria-hidden="true">
+    
+      fill="none" stroke="currentColor" stroke-width="1.5" />
+  </svg>
+
+  <section class="hero">
+    <div class="wrap">
+      <h1>Espacios tranquilos para tu próxima estancia</h1>
+      <p>Explora el catálogo completo sin registrarte. Elige una propiedad, consulta fechas y disponibilidad, y escríbenos directo por WhatsApp.</p>
+    </div>
+  </section>
+
+  <main class="catalogo">
+    <div class="wrap">
+      <div class="grid-propiedades" id="grid-propiedades">
+        <!-- Las tarjetas se generan dinámicamente desde js/catalogo.js -->
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>Estancias</span>
+      <span>Catálogo de acceso libre · Sin registro</span>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/catalogo.js"></script>
+</body>
+</html>
