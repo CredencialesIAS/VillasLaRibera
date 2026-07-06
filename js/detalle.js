@@ -1,9 +1,6 @@
 /**
  * detalle.js
- * Obtiene el id de la propiedad desde la URL (?id=...), la busca en
- * PROPIEDADES (data.js) y renderiza el detalle junto con el formulario
- * de solicitud. Al enviar el formulario, construye el mensaje y
- * redirige a WhatsApp usando la función de whatsapp.js.
+ * Renderiza dinámicamente la propiedad usando Tailwind v4 premium y conecta el lightbox.
  */
 
 function obtenerIdDesdeURL() {
@@ -11,70 +8,102 @@ function obtenerIdDesdeURL() {
   return parametros.get("id");
 }
 
-function crearListaAmenidadesHTML(amenidades) {
-  return amenidades.map((item) => `<li>${item}</li>`).join("");
+function numeroRomano(numero) {
+  const valores = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+  const simbolos = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"];
+  let resto = numero;
+  let resultado = "";
+  for (let i = 0; i < valores.length; i++) {
+    while (resto >= valores[i]) {
+      resultado += simbolos[i];
+      resto -= valores[i];
+    }
+  }
+  return resultado;
 }
 
-/**
- * Construye la cuadrícula de fotos agrupada por categoría (Alberca, Cocina,
- * Recámaras, etc). Si la propiedad solo tiene una foto, no se muestra
- * cuadrícula adicional (ya se ve como imagen principal).
- */
+function crearListaAmenidadesHTML(amenidades) {
+  return amenidades.map((item) => `
+    <li class="flex items-center space-x-3 text-neutral-600 bg-neutral-100/60 border border-neutral-200/50 rounded-xl px-4 py-3 text-sm font-light">
+      <svg class="w-4 h-4 text-neutral-800 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+      </svg>
+      <span>${item}</span>
+    </li>
+  `).join("");
+}
+
 function crearGaleriaHTML(galeria) {
   if (galeria.length <= 1) return "";
 
-  let html = '<div class="galeria">';
+  let html = '<div class="space-y-8 mt-10">';
   let categoriaActual = null;
+  let contadorCategoria = 0;
 
   galeria.forEach((foto, index) => {
     if (foto.categoria !== categoriaActual) {
-      if (categoriaActual !== null) html += "</div>";
-      html += `<p class="galeria-categoria-titulo">${foto.categoria}</p><div class="galeria-grid">`;
+      if (categoriaActual !== null) html += "</div></div>";
+      contadorCategoria += 1;
+      html += `
+        <div class="space-y-3">
+          <div class="flex items-center gap-3">
+            
+            <p class="text-xs font-semibold tracking-[0.15em] text-neutral-400 uppercase">${foto.categoria}</p>
+            <span class="h-px flex-1 bg-neutral-200/70"></span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">`;
       categoriaActual = foto.categoria;
     }
     html += `
-      <button class="galeria-thumb" type="button" data-index="${index}" aria-label="Ver foto ampliada: ${foto.alt}">
-        <img src="${foto.src}" alt="${foto.alt}" loading="lazy" />
+      <button class="aspect-square bg-neutral-100 rounded-2xl overflow-hidden border border-neutral-200/50 hover:opacity-90 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 group cursor-pointer" type="button" data-index="${index}" aria-label="Ver foto ampliada: ${foto.alt}">
+        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="${foto.src}" alt="${foto.alt}" loading="lazy" />
       </button>
     `;
   });
 
-  html += "</div></div>";
+  html += "</div></div></div>";
   return html;
 }
 
 function crearFormularioHTML(propiedad) {
   return `
-    <aside class="panel-formulario">
-      <h2>Solicitar información</h2>
-     
+    <aside class="bg-white border border-neutral-200/70 rounded-[1.75rem] p-6 md:p-8 shadow-sm lg:sticky lg:top-28 space-y-6">
+      <div class="space-y-1">
+        <h2 class="text-xl font-semibold text-neutral-950 tracking-tight font-serif">Solicitar información</h2>
+        <p class="text-xs text-neutral-400 font-light">Verifica disponibilidad al instante</p>
+      </div>
 
-      <form id="form-solicitud" novalidate>
-        <div class="campo">
-          <label for="huespedes">Número de huéspedes</label>
-          <select id="huespedes" name="huespedes" required>
-            ${Array.from({ length: propiedad.huespedesMax }, (_, i) => i + 1)
-              .map((n) => `<option value="${n}">${n} ${n === 1 ? "huésped" : "huéspedes"}</option>`)
-              .join("")}
-          </select>
-        </div>
-
-        <div class="fila-fechas">
-          <div class="campo">
-            <label for="check-in">Check-in</label>
-            <input type="date" id="check-in" name="checkIn" required />
-          </div>
-          <div class="campo">
-            <label for="check-out">Check-out</label>
-            <input type="date" id="check-out" name="checkOut" required />
+      <form id="form-solicitud" class="space-y-4" novalidate>
+        <div class="space-y-2">
+          <label class="block text-xs font-semibold tracking-wider text-neutral-500 uppercase" for="huespedes">Número de huéspedes</label>
+          <div class="relative">
+            <select id="huespedes" name="huespedes" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-950/10 focus:border-neutral-950 transition-colors duration-200 appearance-none cursor-pointer" required>
+              ${Array.from({ length: propiedad.huespedesMax }, (_, i) => i + 1)
+                .map((n) => `<option value="${n}">${n} ${n === 1 ? "huésped" : "huéspedes"}</option>`)
+                .join("")}
+            </select>
+            <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-neutral-400 text-xs">&#9662;</div>
           </div>
         </div>
-        <p class="error-fecha" id="mensaje-error" role="alert"></p>
 
-        <button type="submit" class="btn-whatsapp">
-          Solicitar información por WhatsApp
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label class="block text-xs font-semibold tracking-wider text-neutral-500 uppercase" for="check-in">Check-in</label>
+            <input type="date" id="check-in" name="checkIn" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-950/10 focus:border-neutral-950 transition-colors duration-200 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-60 [&::-webkit-calendar-picker-indicator]:transition-opacity [&::-webkit-calendar-picker-indicator]:duration-200 hover:[&::-webkit-calendar-picker-indicator]:opacity-100" required />
+          </div>
+          <div class="space-y-2">
+            <label class="block text-xs font-semibold tracking-wider text-neutral-500 uppercase" for="check-out">Check-out</label>
+            <input type="date" id="check-out" name="checkOut" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-950/10 focus:border-neutral-950 transition-colors duration-200 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-60 [&::-webkit-calendar-picker-indicator]:transition-opacity [&::-webkit-calendar-picker-indicator]:duration-200 hover:[&::-webkit-calendar-picker-indicator]:opacity-100" required />
+          </div>
+        </div>
+
+        <p class="text-xs text-red-600 font-medium hidden" id="mensaje-error" role="alert"></p>
+
+        <button type="submit" class="w-full bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl py-3.5 text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-lg hover:shadow-neutral-950/20 flex items-center justify-center space-x-2 cursor-pointer mt-2">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.411 0 11.989 0c3.183.001 6.177 1.243 8.43 3.496 2.253 2.253 3.493 5.249 3.493 8.432 0 6.583-5.352 11.933-11.933 11.933-2.006-.002-3.98-.507-5.732-1.464L0 24zm6.59-4.846c1.6.95 3.197 1.451 4.803 1.453 5.426 0 9.842-4.414 9.845-9.843.002-2.63-1.023-5.101-2.886-6.964a9.77 9.77 0 0 0-6.962-2.88c-5.433 0-9.851 4.417-9.854 9.846-.001 1.682.449 3.323 1.302 4.773L1.696 21.394l4.951-1.24z"/></svg>
+          <span>Consultar por WhatsApp</span>
         </button>
-        <p class="nota-formulario">Te responderemos directo por WhatsApp, sin costo ni compromiso.</p>
+        <p class="text-[11px] text-center text-neutral-400 font-light leading-snug">Te responderemos directo por WhatsApp, sin costo ni compromiso alguno.</p>
       </form>
     </aside>
   `;
@@ -82,59 +111,67 @@ function crearFormularioHTML(propiedad) {
 
 function crearDetalleHTML(propiedad) {
   const portada = propiedad.galeria[0];
-  
-  // Generación dinámica del contenedor del mapa si existe la URL
-  const mapaHTML = propiedad.mapaUrl 
-    ? `<div class="detalle-mapa">
-         <iframe src="${propiedad.mapaUrl}" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-       </div>` 
+
+  const mapaHTML = propiedad.mapaUrl
+    ? `<div class="rounded-[1.75rem] overflow-hidden border border-neutral-200/70 shadow-inner mt-8">
+         <iframe src="${propiedad.mapaUrl}" width="100%" height="320" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+       </div>`
     : '';
 
   return `
-    <button class="detalle-media" type="button" data-index="0" aria-label="Ver foto ampliada: ${portada.alt}">
-      <img src="${portada.src}" alt="${portada.alt}" />
+    <button class="w-full aspect-[16/8] md:aspect-[21/9] rounded-[1.75rem] overflow-hidden bg-neutral-100 block border border-neutral-200/50 relative group cursor-pointer" type="button" data-index="0" aria-label="Ver foto ampliada: ${portada.alt}">
+      <img class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700 ease-out" src="${portada.src}" alt="${portada.alt}" />
+      <div class="absolute inset-0 bg-gradient-to-t from-neutral-950/20 via-transparent to-transparent group-hover:from-neutral-950/5 transition-colors duration-300"></div>
     </button>
 
-    ${crearGaleriaHTML(propiedad.galeria)}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 mt-12 items-start">
 
-    <div class="detalle-layout">
-      <div>
-        <p class="detalle-ubicacion">${propiedad.ubicacion}</p>
-        <h1 class="detalle-nombre">${propiedad.nombre}</h1>
-        <p class="detalle-descripcion">${propiedad.descripcion}</p>
+      <div class="lg:col-span-2 space-y-8">
+        <div class="space-y-2">
+          <p class="text-xs font-semibold tracking-[0.15em] text-neutral-400 uppercase">${propiedad.ubicacion}</p>
+          <h1 class="text-3xl md:text-5xl font-light tracking-tight text-neutral-950 font-serif leading-tight">${propiedad.nombre}</h1>
+        </div>
 
-        ${mapaHTML}
-
-        <div class="detalle-datos">
-          <div class="dato">
-            <span class="dato-numero">${propiedad.huespedesMax}</span>
-            <span class="dato-label">Huéspedes</span>
+        <div class="grid grid-cols-3 gap-4 border-y border-neutral-200/60 py-6">
+          <div class="text-center bg-white p-4 rounded-2xl border border-neutral-200/50 shadow-sm">
+            <span class="block text-2xl font-semibold text-neutral-950 font-serif">${propiedad.huespedesMax}</span>
+            <span class="block text-[10px] font-medium text-neutral-400 tracking-wider uppercase mt-1">Huéspedes</span>
           </div>
-          <div class="dato">
-            <span class="dato-numero">${propiedad.recamaras}</span>
-            <span class="dato-label">Recámaras</span>
+          <div class="text-center bg-white p-4 rounded-2xl border border-neutral-200/50 shadow-sm">
+            <span class="block text-2xl font-semibold text-neutral-950 font-serif">${propiedad.recamaras}</span>
+            <span class="block text-[10px] font-medium text-neutral-400 tracking-wider uppercase mt-1">Recámaras</span>
           </div>
-          <div class="dato">
-            <span class="dato-numero">${propiedad.banos}</span>
-            <span class="dato-label">Baños</span>
+          <div class="text-center bg-white p-4 rounded-2xl border border-neutral-200/50 shadow-sm">
+            <span class="block text-2xl font-semibold text-neutral-950 font-serif">${propiedad.banos}</span>
+            <span class="block text-[10px] font-medium text-neutral-400 tracking-wider uppercase mt-1">Baños</span>
           </div>
         </div>
 
-        <p class="amenidades-titulo">Amenidades</p>
-        <ul class="lista-amenidades">
-          ${crearListaAmenidadesHTML(propiedad.amenidades)}
-        </ul>
+        <div class="space-y-4">
+          <p class="text-xs font-semibold tracking-[0.15em] text-neutral-400 uppercase">Sobre este espacio</p>
+          <p class="text-neutral-600 font-light leading-relaxed text-base md:text-lg whitespace-pre-line">${propiedad.descripcion}</p>
+        </div>
+
+        ${mapaHTML}
+
+        <div class="space-y-4 pt-4">
+          <p class="text-xs font-semibold tracking-[0.15em] text-neutral-400 uppercase">Amenidades incluidas</p>
+          <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            ${crearListaAmenidadesHTML(propiedad.amenidades)}
+          </ul>
+        </div>
+
+        ${crearGaleriaHTML(propiedad.galeria)}
       </div>
 
-      ${crearFormularioHTML(propiedad)}
+      <div class="lg:col-span-1">
+        ${crearFormularioHTML(propiedad)}
+      </div>
+
     </div>
   `;
 }
 
-/**
- * Valida que ambas fechas estén presentes y que el check-out sea
- * posterior al check-in. Devuelve un string con el error, o "" si es válido.
- */
 function validarFechas(checkIn, checkOut) {
   if (!checkIn || !checkOut) {
     return "Selecciona la fecha de entrada y de salida.";
@@ -149,7 +186,6 @@ function inicializarFormulario(propiedad) {
   const formulario = document.getElementById("form-solicitud");
   const mensajeError = document.getElementById("mensaje-error");
 
-  // No permitir seleccionar fechas pasadas.
   const hoy = new Date().toISOString().split("T")[0];
   document.getElementById("check-in").setAttribute("min", hoy);
   document.getElementById("check-out").setAttribute("min", hoy);
@@ -162,8 +198,14 @@ function inicializarFormulario(propiedad) {
     const checkOut = document.getElementById("check-out").value;
 
     const error = validarFechas(checkIn, checkOut);
-    mensajeError.textContent = error;
-    if (error) return;
+
+    if (error) {
+      mensajeError.textContent = error;
+      mensajeError.classList.remove("hidden");
+      return;
+    }
+
+    mensajeError.classList.add("hidden");
 
     redirigirAWhatsapp({
       nombreDepartamento: propiedad.nombre,
@@ -175,9 +217,8 @@ function inicializarFormulario(propiedad) {
 }
 
 /* ==========================================================================
-   LIGHTBOX: visor de fotos en grande con navegación anterior/siguiente
+   MÓDULO LIGHTBOX JS
    ========================================================================== */
-
 let galeriaActual = [];
 let indiceActual = 0;
 
@@ -211,9 +252,8 @@ function fotoAnterior() {
   actualizarLightbox();
 }
 
-/** Conecta los clics en la imagen principal y en la cuadrícula al lightbox. */
 function inicializarClicsGaleria(propiedad) {
-  const disparadores = document.querySelectorAll(".detalle-media, .galeria-thumb");
+  const disparadores = document.querySelectorAll("button[data-index]");
   disparadores.forEach((el) => {
     el.addEventListener("click", () => {
       const indice = Number(el.getAttribute("data-index"));
@@ -222,7 +262,6 @@ function inicializarClicsGaleria(propiedad) {
   });
 }
 
-/** Conecta los controles del lightbox (cerrar, flechas, teclado). Se llama una sola vez. */
 function inicializarControlesLightbox() {
   document.getElementById("lightbox-cerrar").addEventListener("click", cerrarLightbox);
   document.getElementById("lightbox-siguiente").addEventListener("click", fotoSiguiente);
@@ -248,12 +287,15 @@ function renderizarDetalle() {
 
   if (!propiedad) {
     contenedor.innerHTML = `
-      <p>No encontramos esta propiedad. <a href="index.html">Vuelve al catálogo</a>.</p>
+      <div class="text-center py-24 space-y-5">
+        <p class="text-neutral-500 font-light font-serif italic text-lg">No encontramos la propiedad que estás buscando.</p>
+        <a href="index.html" class="inline-block bg-neutral-950 hover:bg-neutral-800 text-white text-sm px-6 py-2.5 rounded-xl font-medium transition-colors duration-200">Volver al catálogo</a>
+      </div>
     `;
     return;
   }
 
-  document.title = `${propiedad.nombre} · Estancias`;
+  document.title = `${propiedad.nombre} · Villas La Ribera`;
   contenedor.innerHTML = crearDetalleHTML(propiedad);
   inicializarFormulario(propiedad);
   inicializarClicsGaleria(propiedad);

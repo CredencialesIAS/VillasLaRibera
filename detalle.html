@@ -1,65 +1,87 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Detalle de la propiedad · Estancias</title>
+  <title>Detalle de la Propiedad · Villas La Ribera</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
   <link rel="stylesheet" href="css/style.css" />
 </head>
-<body>
+<body class="bg-neutral-50 text-neutral-900 antialiased font-sans selection:bg-neutral-950 selection:text-white">
 
- <header class="header-villas">
-    <div class="wrap header-villas-inner">
-        <div class="header-marca">
-            <svg class="icono-marca" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 4V2M12 4C8.68629 4 6 6.68629 6 10H18C18 6.68629 15.3137 4 12 4ZM4.92893 4.92893L3.51472 3.51472M19.0711 4.92893L20.4853 3.51472M2 10H4M20 10H22M4 14C4 14 5.5 13 8 13C10.5 13 13.5 15 16 15C18.5 15 20 14 20 14M4 18C4 18 5.5 17 8 17C10.5 17 13.5 19 16 19C18.5 19 20 18 20 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-            <div class="marca-texto">
-                Villas La Ribera 3<span>.</span>
-            </div>
+  <header id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 bg-white/70 backdrop-blur-xl border-b border-neutral-200/50 px-6 py-4 md:px-12">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+
+      <a href="index.html" class="flex items-center space-x-3 group cursor-pointer no-underline">
+        <div class="p-2 bg-neutral-950 text-white rounded-xl transition-transform duration-300 group-hover:rotate-6">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4V2M12 4C8.68629 4 6 6.68629 6 10H18C18 6.68629 15.3137 4 12 4ZM4.92893 4.92893L3.51472 3.51472M19.0711 4.92893L20.4853 3.51472M2 10H4M20 10H22M4 14C4 14 5.5 13 8 13C10.5 13 13.5 15 16 15C18.5 15 20 14 20 14M4 18C4 18 5.5 17 8 17C10.5 17 13.5 19 16 19C18.5 19 20 18 20 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
         </div>
-
-        <div class="header-tagline">
-            Departamentos de Renta Vacacional
+        <div class="text-xl font-semibold tracking-tight text-neutral-950">
+          Villas La Ribera<span class="text-neutral-400">.</span>
         </div>
-    </div>
+      </a>
 
-    <div class="header-olas">
-        <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
-            <path class="ola-linea" d="M0,20 C320,60 420,-20 740,20 C1060,60 1280,-10 1440,30 L1440,60 L0,60 Z"></path>
-            <path class="ola-relleno" d="M0,40 C280,-10 480,60 840,30 C1160,0 1320,50 1440,20 L1440,60 L0,60 Z"></path>
-        </svg>
-    </div>
-</header>
-
-  <main class="detalle">
-    <div class="wrap">
-      <a class="volver" href="index.html">&larr; Volver al catálogo</a>
-
-      <div id="contenido-detalle">
-        <!-- El contenido se genera dinámicamente desde js/detalle.js -->
+      <div class="text-[11px] font-medium tracking-widest uppercase text-neutral-400 bg-neutral-100 px-3 py-1.5 rounded-full border border-neutral-200/60">
+        Departamentos de Renta Vacacional
       </div>
     </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 md:px-12 pt-36 pb-20">
+    <a class="inline-flex items-center space-x-2 text-sm font-medium text-neutral-500 hover:text-neutral-950 transition-colors duration-200 mb-8 group" href="index.html">
+      <span class="transform transition-transform duration-200 group-hover:-translate-x-1">&larr;</span>
+      <span>Volver al catálogo</span>
+    </a>
+
+    <div id="contenido-detalle">
+      </div>
   </main>
 
-  <div class="lightbox" id="lightbox" hidden>
-    <button class="lightbox-cerrar" id="lightbox-cerrar" type="button" aria-label="Cerrar">&times;</button>
-    <button class="lightbox-flecha lightbox-anterior" id="lightbox-anterior" type="button" aria-label="Foto anterior">&larr;</button>
-    <img class="lightbox-img" id="lightbox-img" src="" alt="" />
-    <button class="lightbox-flecha lightbox-siguiente" id="lightbox-siguiente" type="button" aria-label="Foto siguiente">&rarr;</button>
-    <p class="lightbox-contador" id="lightbox-contador"></p>
+  <div class="fixed inset-0 bg-neutral-950/95 z-50 flex items-center justify-center backdrop-blur-md transition-opacity duration-300" id="lightbox" hidden>
+    <button class="absolute top-6 right-6 text-white/60 hover:text-white text-4xl font-light p-2 transition-colors cursor-pointer" id="lightbox-cerrar" type="button" aria-label="Cerrar">&times;</button>
+
+    <button class="absolute left-4 md:left-8 text-white/40 hover:text-white text-2xl p-4 transition-all bg-white/5 hover:bg-white/10 rounded-full cursor-pointer" id="lightbox-anterior" type="button" aria-label="Foto anterior">&#10229;</button>
+
+    <div class="max-w-[85vw] max-h-[80vh] flex items-center justify-center">
+      <img class="max-w-full max-h-full object-contain rounded-2xl shadow-2xl border border-white/5" id="lightbox-img" src="" alt="" />
+    </div>
+
+    <button class="absolute right-4 md:right-8 text-white/40 hover:text-white text-2xl p-4 transition-all bg-white/5 hover:bg-white/10 rounded-full cursor-pointer" id="lightbox-siguiente" type="button" aria-label="Foto siguiente">&#10230;</button>
+
+    <p class="absolute bottom-6 text-xs tracking-widest text-white/50 font-medium uppercase bg-black/40 px-4 py-1.5 rounded-full border border-white/5" id="lightbox-contador"></p>
   </div>
 
-  <footer class="site-footer">
-    <div class="wrap">
-      <span>Estancias</span>
-      <span>Catálogo de acceso libre · Sin registro</span>
+  <footer class="border-t border-neutral-200/60 bg-white py-12 px-6 md:px-12 mt-20 text-sm text-neutral-400">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2 font-medium text-neutral-600">
+        <span>Estancias</span>
+        <span class="text-neutral-300">•</span>
+        <span class="font-light text-neutral-400">Villas La Ribera</span>
+      </div>
+      <div class="text-xs tracking-wide font-light">
+        © 2026 Catálogo de acceso libre · Sin intermediarios
+      </div>
     </div>
   </footer>
+
+  <script>
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 30) {
+        navbar.classList.add('shadow-sm', 'py-3', 'bg-white/90');
+        navbar.classList.remove('py-4', 'bg-white/70');
+      } else {
+        navbar.classList.remove('shadow-sm', 'py-3', 'bg-white/90');
+        navbar.classList.add('py-4', 'bg-white/70');
+      }
+    });
+  </script>
 
   <script src="js/data.js"></script>
   <script src="js/whatsapp.js"></script>
