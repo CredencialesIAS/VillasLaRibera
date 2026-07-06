@@ -86,14 +86,14 @@ function crearFormularioHTML(propiedad) {
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-3">
           <div class="space-y-2">
             <label class="block text-xs font-semibold tracking-wider text-neutral-500 uppercase" for="check-in">Check-in</label>
-            <input type="date" id="check-in" name="checkIn" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-950/10 focus:border-neutral-950 transition-colors duration-200 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-60 [&::-webkit-calendar-picker-indicator]:transition-opacity [&::-webkit-calendar-picker-indicator]:duration-200 hover:[&::-webkit-calendar-picker-indicator]:opacity-100" required />
+            <input type="date" id="check-in" name="checkIn" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-2.5 py-3 text-xs sm:text-sm sm:px-4 focus:outline-none focus:ring-2 focus:ring-neutral-950/10 focus:border-neutral-950 transition-colors duration-200" required />
           </div>
           <div class="space-y-2">
             <label class="block text-xs font-semibold tracking-wider text-neutral-500 uppercase" for="check-out">Check-out</label>
-            <input type="date" id="check-out" name="checkOut" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-950/10 focus:border-neutral-950 transition-colors duration-200 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-60 [&::-webkit-calendar-picker-indicator]:transition-opacity [&::-webkit-calendar-picker-indicator]:duration-200 hover:[&::-webkit-calendar-picker-indicator]:opacity-100" required />
+            <input type="date" id="check-out" name="checkOut" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-2.5 py-3 text-xs sm:text-sm sm:px-4 focus:outline-none focus:ring-2 focus:ring-neutral-950/10 focus:border-neutral-950 transition-colors duration-200" required />
           </div>
         </div>
 
