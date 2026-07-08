@@ -2,18 +2,21 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Panel de Administración · Villas La Ribera</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-neutral-50 text-neutral-950 font-sans antialiased min-h-screen">
+<body class="bg-neutral-50 text-neutral-950 font-sans antialiased min-h-[100dvh]">
 
-  <main id="vista-login" class="flex min-h-screen items-center justify-center px-4 py-12">
-    <div class="w-full max-w-md bg-white border border-neutral-200/70 rounded-[2rem] p-8 md:p-10 shadow-sm space-y-8">
+  <!-- ==========================================================================
+       VISTA DE LOGIN (Ajustada para iOS)
+       ========================================================================== -->
+  <main id="vista-login" class="flex min-h-[100dvh] items-center justify-center px-4 py-6">
+    <div class="w-full max-w-md bg-white border border-neutral-200/70 rounded-[2rem] p-6 md:p-10 shadow-sm space-y-6 md:space-y-8">
       
-      <div class="flex flex-col items-center text-center space-y-4">
-        <div class="w-14 h-14 rounded-xl overflow-hidden border border-neutral-200/60 shadow-sm transition-transform duration-300 hover:rotate-6 shrink-0">
+      <div class="flex flex-col items-center text-center space-y-3">
+        <div class="w-14 h-14 rounded-xl overflow-hidden border border-neutral-200/60 shadow-sm shrink-0">
           <img src="logo.png" alt="Villas La Ribera" class="w-full h-full object-cover" />
         </div>
         <div class="space-y-1">
@@ -22,15 +25,15 @@
         </div>
       </div>
 
-      <form id="form-login" class="space-y-5" novalidate>
-        <div class="space-y-2">
+      <form id="form-login" class="space-y-4 md:space-y-5" novalidate>
+        <div class="space-y-1.5">
           <label class="block text-xs font-semibold tracking-wider text-neutral-500 uppercase" for="login-email">Correo Electrónico</label>
-          <input type="email" id="login-email" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-950/10 focus:border-neutral-950 transition-colors duration-200" placeholder="admin@villaslaribera.com" required />
+          <input type="email" id="login-email" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-950/10 focus:border-neutral-950 transition-colors duration-200 [appearance:none] -webkit-appearance-none" placeholder="admin@villaslaribera.com" required />
         </div>
 
-        <div class="space-y-2">
+        <div class="space-y-1.5">
           <label class="block text-xs font-semibold tracking-wider text-neutral-500 uppercase" for="login-password">Contraseña</label>
-          <input type="password" id="login-password" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-950/10 focus:border-neutral-950 transition-colors duration-200" placeholder="••••••••" required />
+          <input type="password" id="login-password" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-950/10 focus:border-neutral-950 transition-colors duration-200 [appearance:none] -webkit-appearance-none" placeholder="••••••••" required />
         </div>
 
         <p id="login-error" class="text-xs text-red-600 font-medium hidden" role="alert"></p>
@@ -42,7 +45,10 @@
     </div>
   </main>
 
-  <div id="vista-admin" class="hidden flex flex-col min-h-screen">
+  <!-- ==========================================================================
+       VISTA ADMINISTRADOR (Ajustada para iOS)
+       ========================================================================== -->
+  <div id="vista-admin" class="hidden flex flex-col min-h-[100dvh]">
     
     <header class="bg-white border-b border-neutral-200/60 sticky top-0 z-40">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -61,35 +67,38 @@
       </div>
     </header>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 md:space-y-8">
       
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-neutral-200/60 pb-6">
         <div class="space-y-1">
           <h2 class="text-3xl font-light tracking-tight font-serif text-neutral-950">Tus Propiedades</h2>
           <p class="text-xs text-neutral-400 font-light">Gestiona el catálogo de departamentos que se muestran en la web</p>
         </div>
-        <button id="btn-abrir-modal" class="bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl px-5 py-3 text-sm font-medium transition-colors shadow-sm flex items-center gap-2 cursor-pointer shrink-0">
+        <button id="btn-abrir-modal" class="bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl px-5 py-3 text-sm font-medium transition-colors shadow-sm flex items-center justify-center gap-2 cursor-pointer shrink-0">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path></svg>
           <span>Agregar Nueva Villa</span>
         </button>
       </div>
 
-      <div id="lista-propiedades" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      <div id="lista-propiedades" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12"></div>
 
     </main>
   </div>
 
-  <div id="modal-propiedad" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+  <!-- ==========================================================================
+       MODAL: CREACIÓN / EDICIÓN (Optimizado para el teclado de iOS)
+       ========================================================================== -->
+  <div id="modal-propiedad" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div id="modal-overlay" class="absolute inset-0 bg-neutral-950/40 backdrop-blur-xs"></div>
     
-    <div class="bg-white border border-neutral-200/70 rounded-[2rem] shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative z-10 space-y-6 p-6 md:p-8">
+    <div class="bg-white border border-neutral-200/70 rounded-t-[2rem] sm:rounded-[2rem] shadow-xl w-full max-w-2xl max-h-[85dvh] sm:max-h-[90dvh] overflow-y-auto relative z-10 space-y-6 p-6 md:p-8 -webkit-overflow-scrolling: touch;">
       
-      <div class="flex items-center justify-between border-b border-neutral-200/60 pb-4">
+      <div class="flex items-center justify-between border-b border-neutral-200/60 pb-4 sticky top-0 bg-white z-20">
         <h3 id="modal-titulo" class="text-xl font-semibold font-serif tracking-tight">Publicar Nueva Propiedad</h3>
-        <button id="btn-cerrar-modal" class="text-neutral-400 hover:text-neutral-950 text-xl p-1 cursor-pointer">×</button>
+        <button id="btn-cerrar-modal" class="text-neutral-400 hover:text-neutral-950 text-2xl p-2 cursor-pointer touch-manipulation">×</button>
       </div>
 
-      <form id="form-propiedad" class="space-y-6" novalidate>
+      <form id="form-propiedad" class="space-y-6 pb-6" novalidate>
         
         <input type="hidden" id="id-en-edicion" value="">
         
@@ -97,88 +106,86 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="space-y-1">
               <label class="block text-xs font-semibold tracking-wider text-neutral-500 uppercase" for="prop-nombre">Nombre de la Villa</label>
-              <input type="text" id="prop-nombre" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-neutral-950 transition-colors" placeholder="Ej. Villa Luna" required />
+              <input type="text" id="prop-nombre" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-neutral-950 transition-colors [appearance:none] -webkit-appearance-none" placeholder="Ej. Villa Luna" required />
             </div>
             <div class="space-y-1">
               <label class="block text-xs font-semibold tracking-wider text-neutral-500 uppercase" for="prop-ubicacion">Ubicación Corta</label>
-              <input type="text" id="prop-ubicacion" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-neutral-950 transition-colors" placeholder="Ej. Manzanillo, Colima" required />
+              <input type="text" id="prop-ubicacion" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-neutral-950 transition-colors [appearance:none] -webkit-appearance-none" placeholder="Ej. Manzanillo, Colima" required />
             </div>
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-semibold tracking-wider text-neutral-500 uppercase" for="prop-descripcion">Descripción General</label>
-            <textarea id="prop-descripcion" rows="4" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-neutral-950 transition-colors resize-none" placeholder="Escribe los detalles premium del espacio..." required></textarea>
+            <textarea id="prop-descripcion" rows="3" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-neutral-950 transition-colors resize-none [appearance:none] -webkit-appearance-none" placeholder="Escribe los detalles premium del espacio..." required></textarea>
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-semibold tracking-wider text-neutral-500 uppercase" for="prop-mapa">Enlace Embebido de Google Maps</label>
-            <input type="url" id="prop-mapa" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-neutral-950 transition-colors" placeholder="http://googleusercontent.com/maps..." />
+            <input type="url" id="prop-mapa" class="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-neutral-950 transition-colors [appearance:none] -webkit-appearance-none" placeholder="http://googleusercontent.com/maps..." />
           </div>
         </div>
 
-        <div class="bg-neutral-50 border border-neutral-200/60 rounded-2xl p-4 grid grid-cols-3 gap-4">
+        <div class="bg-neutral-50 border border-neutral-200/60 rounded-2xl p-4 grid grid-cols-3 gap-3">
           <div class="space-y-1 text-center">
-            <label class="block text-[10px] font-semibold tracking-wider text-neutral-400 uppercase" for="prop-huespedes">Huéspedes Máx.</label>
-            <input type="number" id="prop-huespedes" min="1" class="w-full bg-white border border-neutral-200 rounded-xl px-3 py-2 text-center text-sm focus:outline-none" value="2" required />
+            <label class="block text-[10px] font-semibold tracking-wider text-neutral-400 uppercase" for="prop-huespedes">Huespedes</label>
+            <input type="number" id="prop-huespedes" min="1" class="w-full bg-white border border-neutral-200 rounded-xl px-2 py-2 text-center text-sm focus:outline-none [appearance:none] -webkit-appearance-none" value="2" required />
           </div>
           <div class="space-y-1 text-center">
-            <label class="block text-[10px] font-semibold tracking-wider text-neutral-400 uppercase" for="prop-recamaras">Recámaras</label>
-            <input type="number" id="prop-recamaras" min="0" class="w-full bg-white border border-neutral-200 rounded-xl px-3 py-2 text-center text-sm focus:outline-none" value="1" required />
+            <label class="block text-[10px] font-semibold tracking-wider text-neutral-400 uppercase" for="prop-recamaras">Cuartos</label>
+            <input type="number" id="prop-recamaras" min="0" class="w-full bg-white border border-neutral-200 rounded-xl px-2 py-2 text-center text-sm focus:outline-none [appearance:none] -webkit-appearance-none" value="1" required />
           </div>
           <div class="space-y-1 text-center">
             <label class="block text-[10px] font-semibold tracking-wider text-neutral-400 uppercase" for="prop-banos">Baños</label>
-            <input type="number" id="prop-banos" min="0" step="0.5" class="w-full bg-white border border-neutral-200 rounded-xl px-3 py-2 text-center text-sm focus:outline-none" value="1" required />
+            <input type="number" id="prop-banos" min="0" step="0.5" class="w-full bg-white border border-neutral-200 rounded-xl px-2 py-2 text-center text-sm focus:outline-none [appearance:none] -webkit-appearance-none" value="1" required />
           </div>
         </div>
 
         <div class="space-y-2">
           <label class="block text-xs font-semibold tracking-wider text-neutral-500 uppercase">Amenidades Incluidas</label>
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <label class="flex items-center space-x-3 bg-neutral-50 border border-neutral-200/60 rounded-xl px-4 py-2.5 text-xs font-light text-neutral-700 cursor-pointer select-none">
-              <input type="checkbox" name="amenidades" value="Alberca privada" class="accent-neutral-950 rounded" />
-              <span>Alberca privada</span>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center space-x-3 bg-neutral-50 border border-neutral-200/60 rounded-xl px-3 py-2.5 text-xs font-light text-neutral-700 cursor-pointer select-none">
+              <input type="checkbox" name="amenidades" value="Alberca privada" class="accent-neutral-950 rounded scale-110" />
+              <span class="truncate">Alberca privada</span>
             </label>
-            <label class="flex items-center space-x-3 bg-neutral-50 border border-neutral-200/60 rounded-xl px-4 py-2.5 text-xs font-light text-neutral-700 cursor-pointer select-none">
-              <input type="checkbox" name="amenidades" value="Wi-Fi de alta velocidad" class="accent-neutral-950 rounded" />
-              <span>Wi-Fi</span>
+            <label class="flex items-center space-x-3 bg-neutral-50 border border-neutral-200/60 rounded-xl px-3 py-2.5 text-xs font-light text-neutral-700 cursor-pointer select-none">
+              <input type="checkbox" name="amenidades" value="Wi-Fi de alta velocidad" class="accent-neutral-950 rounded scale-110" />
+              <span class="truncate">Wi-Fi</span>
             </label>
-            <label class="flex items-center space-x-3 bg-neutral-50 border border-neutral-200/60 rounded-xl px-4 py-2.5 text-xs font-light text-neutral-700 cursor-pointer select-none">
-              <input type="checkbox" name="amenidades" value="Aire acondicionado" class="accent-neutral-950 rounded" />
-              <span>Aire acondicionado</span>
+            <label class="flex items-center space-x-3 bg-neutral-50 border border-neutral-200/60 rounded-xl px-3 py-2.5 text-xs font-light text-neutral-700 cursor-pointer select-none">
+              <input type="checkbox" name="amenidades" value="Aire acondicionado" class="accent-neutral-950 rounded scale-110" />
+              <span class="truncate">Aire acondicionado</span>
             </label>
-            <label class="flex items-center space-x-3 bg-neutral-50 border border-neutral-200/60 rounded-xl px-4 py-2.5 text-xs font-light text-neutral-700 cursor-pointer select-none">
-              <input type="checkbox" name="amenidades" value="Vista al mar" class="accent-neutral-950 rounded" />
-              <span>Vista al mar</span>
+            <label class="flex items-center space-x-3 bg-neutral-50 border border-neutral-200/60 rounded-xl px-3 py-2.5 text-xs font-light text-neutral-700 cursor-pointer select-none">
+              <input type="checkbox" name="amenidades" value="Vista al mar" class="accent-neutral-950 rounded scale-110" />
+              <span class="truncate">Vista al mar</span>
             </label>
-            <label class="flex items-center space-x-3 bg-neutral-50 border border-neutral-200/60 rounded-xl px-4 py-2.5 text-xs font-light text-neutral-700 cursor-pointer select-none">
-              <input type="checkbox" name="amenidades" value="Cocina equipada" class="accent-neutral-950 rounded" />
-              <span>Cocina equipada</span>
+            <label class="flex items-center space-x-3 bg-neutral-50 border border-neutral-200/60 rounded-xl px-3 py-2.5 text-xs font-light text-neutral-700 cursor-pointer select-none">
+              <input type="checkbox" name="amenidades" value="Cocina equipada" class="accent-neutral-950 rounded scale-110" />
+              <span class="truncate">Cocina equipada</span>
             </label>
-            <label class="flex items-center space-x-3 bg-neutral-50 border border-neutral-200/60 rounded-xl px-4 py-2.5 text-xs font-light text-neutral-700 cursor-pointer select-none">
-              <input type="checkbox" name="amenidades" value="Estacionamiento gratuito" class="accent-neutral-950 rounded" />
-              <span>Estacionamiento</span>
+            <label class="flex items-center space-x-3 bg-neutral-50 border border-neutral-200/60 rounded-xl px-3 py-2.5 text-xs font-light text-neutral-700 cursor-pointer select-none">
+              <input type="checkbox" name="amenidades" value="Estacionamiento gratuito" class="accent-neutral-950 rounded scale-110" />
+              <span class="truncate">Estacionamiento</span>
             </label>
           </div>
         </div>
 
         <div class="space-y-4">
           <label class="block text-xs font-semibold tracking-wider text-neutral-500 uppercase">Fotografías del Departamento</label>
-          
           <div class="border-2 border-dashed border-neutral-200 hover:border-neutral-400 bg-neutral-50 rounded-2xl p-6 text-center transition-colors relative cursor-pointer group">
             <input type="file" id="prop-fotos" multiple accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" />
             <div class="space-y-1 pointer-events-none">
               <p class="text-sm font-medium text-neutral-900">Selecciona o arrastra las fotos aquí</p>
-              <p class="text-xs text-neutral-400 font-light">Puedes elegir varias imágenes a la vez (.jpg, .png)</p>
+              <p class="text-xs text-neutral-400 font-light">Puedes elegir varias imágenes (.jpg, .png)</p>
             </div>
           </div>
-          
           <div id="lista-previa-fotos" class="text-xs text-neutral-500 font-light space-y-1 pt-1"></div>
           <div id="contenedor-imagenes-edit" class="w-full mt-4"></div>
         </div>
 
-        <div class="flex items-center justify-end space-x-3 pt-4 border-t border-neutral-200/60">
-          <button type="button" class="text-xs font-medium text-neutral-500 hover:text-neutral-950 border border-neutral-200 rounded-xl px-4 py-2.5 transition-colors cursor-pointer" onclick="document.getElementById('btn-cerrar-modal').click()">
+        <div class="flex items-center justify-end space-x-3 pt-4 border-t border-neutral-200/60 sticky bottom-0 bg-white z-20">
+          <button type="button" class="text-xs font-medium text-neutral-500 hover:text-neutral-950 border border-neutral-200 rounded-xl px-4 py-3 transition-colors cursor-pointer touch-manipulation" onclick="document.getElementById('btn-cerrar-modal').click()">
             Cancelar
           </button>
-          <button type="submit" class="bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl px-5 py-2.5 text-xs font-medium transition-colors shadow-sm cursor-pointer">
+          <button type="submit" class="bg-neutral-950 hover:bg-neutral-800 text-white rounded-xl px-5 py-3 text-xs font-medium transition-colors shadow-sm cursor-pointer touch-manipulation">
             Guardar Propiedad
           </button>
         </div>
