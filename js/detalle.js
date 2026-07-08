@@ -1,7 +1,17 @@
 /**
  * detalle.js
- * Renderiza dinámicamente la propiedad usando Tailwind v4 premium y conecta el lightbox.
+ * Renderiza dinámicamente la propiedad usando Tailwind v4 premium, conecta Supabase y el lightbox.
  */
+
+// ==========================================================================
+// 1. IMPORTAR E INICIALIZAR SUPABASE
+// ==========================================================================
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+const SUPABASE_URL = "https://hjtofzyrpfkoyoeriqay.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_zttTtLVuXQu3VrP0yLkbjA_Q_-eoVkV";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 function obtenerIdDesdeURL() {
   const parametros = new URLSearchParams(window.location.search);
@@ -23,6 +33,7 @@ function numeroRomano(numero) {
 }
 
 function crearListaAmenidadesHTML(amenidades) {
+  if (!amenidades || !Array.isArray(amenidades)) return "";
   return amenidades.map((item) => `
     <li class="flex items-center space-x-3 text-neutral-600 bg-neutral-100/60 border border-neutral-200/50 rounded-xl px-4 py-3 text-sm font-light">
       <svg class="w-4 h-4 text-neutral-800 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -34,20 +45,17 @@ function crearListaAmenidadesHTML(amenidades) {
 }
 
 function crearGaleriaHTML(galeria) {
-  if (galeria.length <= 1) return "";
+  if (!galeria || galeria.length <= 1) return "";
 
   let html = '<div class="space-y-8 mt-10">';
   let categoriaActual = null;
-  let contadorCategoria = 0;
 
   galeria.forEach((foto, index) => {
     if (foto.categoria !== categoriaActual) {
       if (categoriaActual !== null) html += "</div></div>";
-      contadorCategoria += 1;
       html += `
         <div class="space-y-3">
           <div class="flex items-center gap-3">
-            
             <p class="text-xs font-semibold tracking-[0.15em] text-neutral-400 uppercase">${foto.categoria}</p>
             <span class="h-px flex-1 bg-neutral-200/70"></span>
           </div>
@@ -55,8 +63,8 @@ function crearGaleriaHTML(galeria) {
       categoriaActual = foto.categoria;
     }
     html += `
-      <button class="aspect-square bg-neutral-100 rounded-2xl overflow-hidden border border-neutral-200/50 hover:opacity-90 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 group cursor-pointer" type="button" data-index="${index}" aria-label="Ver foto ampliada: ${foto.alt}">
-        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="${foto.src}" alt="${foto.alt}" loading="lazy" />
+      <button class="aspect-square bg-neutral-100 rounded-2xl overflow-hidden border border-neutral-200/50 hover:opacity-90 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 group cursor-pointer" type="button" data-index="${index}" aria-label="Ver foto ampliada">
+        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="${foto.src}" alt="${foto.alt || 'Galería'}" loading="lazy" />
       </button>
     `;
   });
@@ -110,7 +118,7 @@ function crearFormularioHTML(propiedad) {
 }
 
 function crearDetalleHTML(propiedad) {
-  const portada = propiedad.galeria[0];
+  const portada = propiedad.galeria && propiedad.galeria[0] ? propiedad.galeria[0] : { src: 'img/logo.png', alt: propiedad.nombre };
 
   const mapaHTML = propiedad.mapaUrl
     ? `<div class="rounded-[1.75rem] overflow-hidden border border-neutral-200/70 shadow-inner mt-8">
@@ -119,8 +127,8 @@ function crearDetalleHTML(propiedad) {
     : '';
 
   return `
-    <button class="w-full aspect-[16/8] md:aspect-[21/9] rounded-[1.75rem] overflow-hidden bg-neutral-100 block border border-neutral-200/50 relative group cursor-pointer" type="button" data-index="0" aria-label="Ver foto ampliada: ${portada.alt}">
-      <img class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700 ease-out" src="${portada.src}" alt="${portada.alt}" />
+    <button class="w-full aspect-[16/8] md:aspect-[21/9] rounded-[1.75rem] overflow-hidden bg-neutral-100 block border border-neutral-200/50 relative group cursor-pointer" type="button" data-index="0" aria-label="Ver foto ampliada">
+      <img class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700 ease-out" src="${portada.src}" alt="${portada.alt || 'Portada'}" />
       <div class="absolute inset-0 bg-gradient-to-t from-neutral-950/20 via-transparent to-transparent group-hover:from-neutral-950/5 transition-colors duration-300"></div>
     </button>
 
@@ -156,6 +164,7 @@ function crearDetalleHTML(propiedad) {
 
         <div class="space-y-4 pt-4">
           <p class="text-xs font-semibold tracking-[0.15em] text-neutral-400 uppercase">Amenidades incluidas</p>
+          <h2 class="sr-only">Servicios</h2>
           <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             ${crearListaAmenidadesHTML(propiedad.amenidades)}
           </ul>
@@ -216,6 +225,13 @@ function inicializarFormulario(propiedad) {
   });
 }
 
+function redirigirAWhatsapp(datos) {
+  const baseTexto = `¡Hola! Me interesa reservar la propiedad "${datos.nombreDepartamento}".\n\n Entrada: ${datos.checkIn}\n Salida: ${datos.checkOut}\n Personas: ${datos.huespedes}\n\n¿Tienen disponibilidad en esas fechas?`;
+  const mensajeEncoded = encodeURIComponent(baseTexto);
+  const numeroTelefono = "5213141036271"; // Cambia este número por tu WhatsApp Real
+  window.open(`https://wa.me/${numeroTelefono}?text=${mensajeEncoded}`, "_blank");
+}
+
 /* ==========================================================================
    MÓDULO LIGHTBOX JS
    ========================================================================== */
@@ -225,7 +241,7 @@ let indiceActual = 0;
 function actualizarLightbox() {
   const foto = galeriaActual[indiceActual];
   document.getElementById("lightbox-img").src = foto.src;
-  document.getElementById("lightbox-img").alt = foto.alt;
+  document.getElementById("lightbox-img").alt = foto.alt || "Imagen de galería";
   document.getElementById("lightbox-contador").textContent = `${indiceActual + 1} / ${galeriaActual.length}`;
 }
 
@@ -253,7 +269,7 @@ function fotoAnterior() {
 }
 
 function inicializarClicsGaleria(propiedad) {
-  const disparadores = document.querySelectorAll("button[data-index]");
+  const disparadores = document.querySelectorAll("[data-index]");
   disparadores.forEach((el) => {
     el.addEventListener("click", () => {
       const indice = Number(el.getAttribute("data-index"));
@@ -280,18 +296,77 @@ function inicializarControlesLightbox() {
   });
 }
 
-function renderizarDetalle() {
+// ==========================================================================
+// 4. CARGAR PROPIEDAD DESDE INTERNET (SUPABASE) O RESPALDO LOCAL
+// ==========================================================================
+async function renderizarDetalle() {
   const id = obtenerIdDesdeURL();
-  const propiedad = obtenerPropiedadPorId(id);
   const contenedor = document.getElementById("contenido-detalle");
+  if (!contenedor) return;
 
+  let propiedad = null;
+
+  if (!id) {
+    mostrarMensajeError(contenedor);
+    return;
+  }
+
+  try {
+    // A. Intentar buscar primero en Supabase
+    const { data, error } = await supabase
+      .from('propiedades')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (!error && data) {
+      // Adaptar el formato de Supabase al que requiere tu diseño premium
+      const listaFotos = Array.isArray(data.fotos) ? data.fotos : [];
+      
+      propiedad = {
+        id: data.id,
+        nombre: data.nombre,
+        ubicacion: data.ubicacion,
+        descripcion: data.descripcion,  
+        mapaUrl: data.mapa_url,
+        huespedesMax: data.huespedes,
+        recamaras: data.recamaras,
+        banos: data.banos,
+        amenidades: data.amenidades,
+        // Construimos el objeto galería mapeando el arreglo plano de URLs
+        galeria: listaFotos.map((url, i) => ({
+          src: url,
+          alt: `${data.nombre} - Foto ${i + 1}`,
+          categoria: i === 0 ? "Fotografía principal" : "Instalaciones de la propiedad"
+        }))
+      };
+    }
+  } catch (error) {
+    console.error("Error al consultar Supabase:", error);
+  }
+
+  // B. Respaldo por si es una propiedad de prueba del archivo js/data.js
+  if (!propiedad && typeof PROPIEDADES !== 'undefined' && Array.isArray(PROPIEDADES)) {
+    const local = PROPIEDADES.find(p => String(p.id) === String(id));
+    if (local) {
+      propiedad = {
+        id: local.id,
+        nombre: local.nombre,
+        ubicacion: local.ubicacion,
+        descripcion: local.descripcion || local.resumen,
+        mapaUrl: local.mapaUrl,
+        huespedesMax: local.huespedes || local.huespedesMax,
+        recamaras: local.recamaras,
+        banos: local.banos,
+        amenidades: local.amenidades,
+        galeria: local.fotos ? local.fotos.map((url, i) => ({ src: url, alt: local.nombre, categoria: "Galería de imágenes" })) : (local.galeria || [])
+      };
+    }
+  }
+
+  // C. Si no se encontró en ningún lado, mostrar error
   if (!propiedad) {
-    contenedor.innerHTML = `
-      <div class="text-center py-24 space-y-5">
-        <p class="text-neutral-500 font-light font-serif italic text-lg">No encontramos la propiedad que estás buscando.</p>
-        <a href="index.html" class="inline-block bg-neutral-950 hover:bg-neutral-800 text-white text-sm px-6 py-2.5 rounded-xl font-medium transition-colors duration-200">Volver al catálogo</a>
-      </div>
-    `;
+    mostrarMensajeError(contenedor);
     return;
   }
 
@@ -299,6 +374,15 @@ function renderizarDetalle() {
   contenedor.innerHTML = crearDetalleHTML(propiedad);
   inicializarFormulario(propiedad);
   inicializarClicsGaleria(propiedad);
+}
+
+function mostrarMensajeError(contenedor) {
+  contenedor.innerHTML = `
+    <div class="text-center py-24 space-y-5">
+      <p class="text-neutral-500 font-light font-serif italic text-lg">No encontramos la propiedad que estás buscando o dejó de estar disponible.</p>
+      <a href="index.html" class="inline-block bg-neutral-950 hover:bg-neutral-800 text-white text-sm px-6 py-2.5 rounded-xl font-medium transition-colors duration-200">Volver al catálogo</a>
+    </div>
+  `;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
