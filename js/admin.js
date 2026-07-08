@@ -204,8 +204,6 @@ async function cargarPropiedades() {
   ejecutandoCarga = false;
 }
 
-// Escuchador inteligente para la lista de propiedades (Evita desconexiones por módulo)
-// Escuchador inteligente para la lista de propiedades (Con Diagnóstico)
 listaPropiedades.addEventListener('click', (e) => {
   console.log("--- NUEVO CLIC DETECTADO ---");
   
@@ -222,12 +220,10 @@ listaPropiedades.addEventListener('click', (e) => {
   console.log(`✅ Botón detectado -> Acción: ${action} | ID: ${id}`);
   console.log("📦 Total de propiedades en memoria:", propiedadesLocales.length);
 
-  // Forzamos la comparación a texto
   const villa = propiedadesLocales.find(v => String(v.id) === String(id)); 
   
   if (!villa) {
     console.log("❌ Error crítico: No se encontró ninguna propiedad con el ID", id, "en la memoria local.");
-    console.log("Contenido actual de la memoria:", propiedadesLocales);
     alert("Error de sincronización. Recarga la página por favor.");
     return;
   }
@@ -243,19 +239,14 @@ listaPropiedades.addEventListener('click', (e) => {
 });
 
 // ==========================================================================
-// 7. GESTIÓN DE ELIMINACIÓN DE IMÁGENES
-// ==========================================================================
-// ==========================================================================
 // 7. GESTIÓN DE ELIMINACIÓN DE IMÁGENES (Versión Ultra-Compatible Móvil)
 // ==========================================================================
 function mostrarImagenesParaEditar(urls) {
-  // Buscamos el elemento directamente aquí dentro para evitar errores de carga en celulares
   const contenedor = document.getElementById('contenedor-imagenes-edit');
   if (!contenedor) return; 
 
   contenedor.innerHTML = ''; 
 
-  // 1. Forzamos que las URLs sean un arreglo válido por si llega nulo o vacío
   let listaUrls = [];
   if (Array.isArray(urls)) {
     listaUrls = urls;
@@ -267,7 +258,6 @@ function mostrarImagenesParaEditar(urls) {
     }
   }
 
-  // 2. Si NO hay imágenes, pintamos un aviso directo en la pantalla del celular
   if (!Array.isArray(listaUrls) || listaUrls.length === 0) {
     contenedor.innerHTML = `
       <div class="bg-neutral-50 border border-neutral-200 p-4 rounded-xl text-center mt-2">
@@ -277,7 +267,6 @@ function mostrarImagenesParaEditar(urls) {
     return;
   }
 
-  // 3. Si SÍ hay imágenes, creamos la cuadrícula adaptada a pantallas táctiles
   contenedor.innerHTML = `
     <h4 class="text-sm font-semibold text-neutral-700 mb-3 flex items-center gap-2">
       <span>🖼️</span> Imágenes actuales <span class="text-[10px] font-normal text-neutral-400">(Toca la X para eliminar)</span>
@@ -285,7 +274,6 @@ function mostrarImagenesParaEditar(urls) {
   `;
   
   const divGrid = document.createElement('div');
-  // grid-cols-3 asegura que en cualquier celular se vean 3 imágenes por fila ordenadas
   divGrid.className = 'grid grid-cols-3 sm:grid-cols-5 gap-3 bg-neutral-50 border border-neutral-200 p-3 rounded-xl';
 
   listaUrls.forEach((url) => {
@@ -304,7 +292,6 @@ function mostrarImagenesParaEditar(urls) {
   contenedor.appendChild(divGrid);
 }
 
-// Escuchador global para eliminar fotos, protegido para pantallas táctiles
 document.addEventListener('click', async (e) => {
   const boton = e.target.closest('button');
   if (!boton || boton.dataset.action !== 'eliminar-foto') return;
@@ -340,7 +327,6 @@ document.addEventListener('click', async (e) => {
   if (typeof cargarPropiedades === 'function') await cargarPropiedades();
 });
 
-// Escuchador inteligente para eliminar imágenes dentro del contenedor
 if (contenedorImagenesEdit) {
   contenedorImagenesEdit.addEventListener('click', async (e) => {
     const boton = e.target.closest('button');
@@ -368,47 +354,60 @@ if (contenedorImagenesEdit) {
     const { error: errorUpdate } = await supabase.from('propiedades').update({ fotos: nuevasFotos }).eq('id', id);
     if (errorUpdate) return alert("Error al guardar cambios en la base de datos.");
 
-    // Buscamos la propiedad en memoria local para actualizar sus fotos al instante sin recargar la página entera
-    const propiedadLocal = propiedadesLocales.find(v => v.id === id);
+    const propiedadLocal = propiedadesLocales.find(v => String(v.id) === String(id));
     if (propiedadLocal) propiedadLocal.fotos = nuevasFotos;
 
     mostrarImagenesParaEditar(nuevasFotos);
     await cargarPropiedades();
   });
 }
-// ==========================================================================
-// FUNCIONES DE CONTROL (RECUPERADAS)
-// ==========================================================================
 
+// ==========================================================================
+// FUNCIONES DE CONTROL (OPTIMIZADAS CONTRA ERROR 400 MÓVIL)
+// ==========================================================================
 function abrirEditarPropiedad(data) {
-  // 1. Llenamos los campos del formulario con los datos de la propiedad
+  if (!data || !data.id) {
+    console.error("Error: Datos de la propiedad inválidos o ID ausente.");
+    return;
+  }
+
+  // 1. Sincronizamos los inputs controlando valores nulos
   document.getElementById('id-en-edicion').value = data.id;
-  document.getElementById('prop-nombre').value = data.nombre;
-  document.getElementById('prop-ubicacion').value = data.ubicacion;
-  document.getElementById('prop-descripcion').value = data.descripcion;
+  document.getElementById('prop-nombre').value = data.nombre || '';
+  document.getElementById('prop-ubicacion').value = data.ubicacion || '';
+  document.getElementById('prop-descripcion').value = data.descripcion || '';
   
-  // Por si acaso el campo de mapa se llama diferente en tu BD
   const campoMapa = document.getElementById('prop-mapa');
   if (campoMapa) campoMapa.value = data.mapa_url || '';
   
-  document.getElementById('prop-huespedes').value = data.huespedes;
-  document.getElementById('prop-recamaras').value = data.recamaras;
-  document.getElementById('prop-banos').value = data.banos;
+  document.getElementById('prop-huespedes').value = data.huespedes || 2;
+  document.getElementById('prop-recamaras').value = data.recamaras || 1;
+  document.getElementById('prop-banos').value = data.banos || 1;
   
-  // 2. Limpiamos los inputs de archivos nuevos por si quedaron residuos
-  if (typeof inputFotos !== 'undefined') inputFotos.value = '';
-  if (typeof listaPrevia !== 'undefined') listaPrevia.innerHTML = '';
+  if (typeof inputFotos !== 'undefined' && inputFotos) inputFotos.value = '';
+  if (typeof listaPrevia !== 'undefined' && listaPrevia) listaPrevia.innerHTML = '';
 
-  // 3. Mostramos las imágenes actuales que ya tiene la propiedad (si existe la función)
-  if (typeof mostrarImagenesParaEditar === 'function') {
-    mostrarImagenesParaEditar(data.fotos || []);
+  // 2. Formateamos de manera segura el arreglo de fotos para evitar Bad Requests
+  let arregloFotos = [];
+  if (data.fotos) {
+    if (Array.isArray(data.fotos)) {
+      arregloFotos = data.fotos;
+    } else if (typeof data.fotos === 'string' && data.fotos.trim() !== '') {
+      try {
+        arregloFotos = JSON.parse(data.fotos);
+      } catch (e) {
+        arregloFotos = data.fotos.split(',').map(u => u.trim()).filter(u => u !== '');
+      }
+    }
   }
+
+  // 3. Inyectamos las fotos en la interfaz
+  mostrarImagenesParaEditar(arregloFotos);
   
-  // 4. Cambiamos el título del modal y lo hacemos visible
-  if (typeof modalTitulo !== 'undefined') modalTitulo.textContent = "Editar Propiedad";
-  if (typeof modalPropiedad !== 'undefined') modalPropiedad.classList.remove('hidden');
+  if (typeof modalTitulo !== 'undefined' && modalTitulo) modalTitulo.textContent = "Editar Propiedad";
+  if (typeof modalPropiedad !== 'undefined' && modalPropiedad) modalPropiedad.classList.remove('hidden');
   
-  console.log("🎯 Modal de edición abierto con los datos de:", data.nombre);
+  console.log("🎯 Modal de edición abierto correctamente.");
 }
 
 async function ejecutarBorradoPropiedad(id, nombre) {
@@ -418,7 +417,7 @@ async function ejecutarBorradoPropiedad(id, nombre) {
       if (error) throw error;
       
       alert("Propiedad eliminada con éxito.");
-      await cargarPropiedades(); // Recargamos la lista
+      await cargarPropiedades();
     } catch (error) {
       console.error("Error al eliminar de Supabase:", error);
       alert("Hubo un error al intentar eliminar la propiedad.");
