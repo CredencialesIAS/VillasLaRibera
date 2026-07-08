@@ -246,7 +246,10 @@ function mostrarImagenesParaEditar(urls) {
   if (!contenedor) return; 
 
   contenedor.innerHTML = ''; 
+console.log("Función mostrarImagenesParaEditar ejecutada con:", urls);
+  // -------------------
 
+  contenedor.innerHTML = '<p class="text-xs text-blue-500">Sistema: Cargando fotos...</p>';
   let listaUrls = [];
   if (Array.isArray(urls)) {
     listaUrls = urls;
