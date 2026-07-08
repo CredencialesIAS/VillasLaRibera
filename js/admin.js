@@ -245,35 +245,100 @@ listaPropiedades.addEventListener('click', (e) => {
 // ==========================================================================
 // 7. GESTIÓN DE ELIMINACIÓN DE IMÁGENES
 // ==========================================================================
+// ==========================================================================
+// 7. GESTIÓN DE ELIMINACIÓN DE IMÁGENES (Versión Ultra-Compatible Móvil)
+// ==========================================================================
 function mostrarImagenesParaEditar(urls) {
-  if (!contenedorImagenesEdit) return; 
+  // Buscamos el elemento directamente aquí dentro para evitar errores de carga en celulares
+  const contenedor = document.getElementById('contenedor-imagenes-edit');
+  if (!contenedor) return; 
 
-  contenedorImagenesEdit.innerHTML = ''; 
-  if (urls.length === 0) return;
+  contenedor.innerHTML = ''; 
 
-  contenedorImagenesEdit.innerHTML = `
+  // 1. Forzamos que las URLs sean un arreglo válido por si llega nulo o vacío
+  let listaUrls = [];
+  if (Array.isArray(urls)) {
+    listaUrls = urls;
+  } else if (typeof urls === 'string' && urls.trim() !== '') {
+    try {
+      listaUrls = JSON.parse(urls);
+    } catch (e) {
+      listaUrls = urls.split(',').map(u => u.trim());
+    }
+  }
+
+  // 2. Si NO hay imágenes, pintamos un aviso directo en la pantalla del celular
+  if (!Array.isArray(listaUrls) || listaUrls.length === 0) {
+    contenedor.innerHTML = `
+      <div class="bg-neutral-50 border border-neutral-200 p-4 rounded-xl text-center mt-2">
+        <p class="text-xs text-neutral-400">🫙 Esta propiedad no tiene imágenes registradas actualmente.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // 3. Si SÍ hay imágenes, creamos la cuadrícula adaptada a pantallas táctiles
+  contenedor.innerHTML = `
     <h4 class="text-sm font-semibold text-neutral-700 mb-3 flex items-center gap-2">
-      <span>🖼️</span> Imágenes actuales de la propiedad <span class="text-xs font-normal text-neutral-400">(Click en la X para eliminar)</span>
+      <span>🖼️</span> Imágenes actuales <span class="text-[10px] font-normal text-neutral-400">(Toca la X para eliminar)</span>
     </h4>
   `;
   
   const divGrid = document.createElement('div');
-  divGrid.className = 'grid grid-cols-3 sm:grid-cols-5 gap-4 bg-neutral-50 border border-neutral-200 p-4 rounded-xl';
+  // grid-cols-3 asegura que en cualquier celular se vean 3 imágenes por fila ordenadas
+  divGrid.className = 'grid grid-cols-3 sm:grid-cols-5 gap-3 bg-neutral-50 border border-neutral-200 p-3 rounded-xl';
 
-  urls.forEach((url) => {
+  listaUrls.forEach((url) => {
+    if (!url) return;
     const div = document.createElement('div');
-    div.className = "relative aspect-square group overflow-visible";
+    div.className = "relative aspect-square overflow-visible";
     div.innerHTML = `
-      <img src="${url}" class="w-full h-full object-cover rounded-lg shadow-sm border border-neutral-200">
-      <button type="button" data-url="${url}" data-action="eliminar-foto" class="absolute -top-1.5 -right-1.5 bg-neutral-900/90 text-white rounded-full w-6 h-6 flex items-center justify-center text-[10px] font-bold hover:bg-red-600 shadow-md cursor-pointer transition-all border border-white">
+      <img src="${url}" class="w-full h-full object-cover rounded-lg shadow-sm border border-neutral-200 block" />
+      <button type="button" data-url="${url}" data-action="eliminar-foto" class="absolute -top-1.5 -right-1.5 bg-neutral-900 text-white rounded-full w-6 h-6 flex items-center justify-center text-[10px] font-bold shadow-md border border-white active:bg-red-600 touch-manipulation">
         ✕
       </button>
     `;
     divGrid.appendChild(div);
   });
 
-  contenedorImagenesEdit.appendChild(divGrid);
+  contenedor.appendChild(divGrid);
 }
+
+// Escuchador global para eliminar fotos, protegido para pantallas táctiles
+document.addEventListener('click', async (e) => {
+  const boton = e.target.closest('button');
+  if (!boton || boton.dataset.action !== 'eliminar-foto') return;
+
+  const urlCompleta = boton.dataset.url;
+  if (!confirm("¿Seguro que quieres eliminar esta imagen? Esta acción no se puede deshacer.")) return;
+
+  const id = document.getElementById('id-en-edicion').value;
+  if (!id) return alert("Hubo un error recuperando el ID de la propiedad.");
+
+  const nombreArchivo = urlCompleta.split('/').pop(); 
+
+  const { error: errorStorage } = await supabase.storage.from('propiedades').remove([nombreArchivo]); 
+  if (errorStorage) {
+    console.error('Error al borrar de Storage:', errorStorage);
+    return alert("Error al eliminar la imagen del servidor.");
+  }
+
+  const { data: propiedad, error: errorSelect } = await supabase.from('propiedades').select('fotos').eq('id', id).single();
+  if (errorSelect) return alert("Error al actualizar los datos.");
+
+  const nuevasFotos = (propiedad.fotos || []).filter(fotoUrl => fotoUrl !== urlCompleta);
+
+  const { error: errorUpdate } = await supabase.from('propiedades').update({ fotos: nuevasFotos }).eq('id', id);
+  if (errorUpdate) return alert("Error al guardar cambios en la base de datos.");
+
+  if (typeof propiedadesLocales !== 'undefined') {
+    const propiedadLocal = propiedadesLocales.find(v => String(v.id) === String(id));
+    if (propiedadLocal) propiedadLocal.fotos = nuevasFotos;
+  }
+
+  mostrarImagenesParaEditar(nuevasFotos);
+  if (typeof cargarPropiedades === 'function') await cargarPropiedades();
+});
 
 // Escuchador inteligente para eliminar imágenes dentro del contenedor
 if (contenedorImagenesEdit) {
